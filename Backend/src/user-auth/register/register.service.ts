@@ -9,8 +9,8 @@ export class RegisterService {
     @InjectModel(User.name) private readonly userModel: Model<User>,
   ) {}
 
-  async register(username: string, password: string): Promise<any> {
-    const newUser = new this.userModel({ username, password });
+  async register(userDetails: Partial<User>): Promise<User> {
+    const newUser = new this.userModel(userDetails);
     return await newUser.save();
   }
 }

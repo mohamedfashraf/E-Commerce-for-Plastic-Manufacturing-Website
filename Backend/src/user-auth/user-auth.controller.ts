@@ -1,27 +1,13 @@
 import { Controller, Post, Body } from '@nestjs/common';
-import { LoginService } from './login/login.service';
 import { RegisterService } from './register/register.service';
+import { User } from './models/user.model';
 
-@Controller('auth')
+@Controller('user-auth')
 export class UserAuthController {
-  constructor(
-    private readonly loginService: LoginService,
-    private readonly registerService: RegisterService,
-  ) {}
-
-  @Post('login')
-  async login(
-    @Body('username') username: string,
-    @Body('password') password: string,
-  ) {
-    return this.loginService.login(username, password);
-  }
+  constructor(private readonly registerService: RegisterService) {}
 
   @Post('register')
-  async register(
-    @Body('username') username: string,
-    @Body('password') password: string,
-  ) {
-    return this.registerService.register(username, password);
+  async registerUser(@Body() user: User) {
+    return this.registerService.register(user);
   }
 }
