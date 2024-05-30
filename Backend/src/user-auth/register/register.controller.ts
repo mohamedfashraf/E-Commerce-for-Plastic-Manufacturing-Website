@@ -9,6 +9,6 @@ export class RegisterController {
   @Post()
   async registerUser(@Body() userDetails: Partial<User>) {
     const newUser = await this.registerService.register(userDetails);
-    return newUser; // Or whatever response you want to send back
+    return newUser;
   }
 }
