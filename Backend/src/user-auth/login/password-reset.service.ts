@@ -1,11 +1,9 @@
-// password-reset.service.ts
-
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../models/user.model';
-import * as bcrypt from 'bcryptjs';
 import * as crypto from 'crypto';
+import * as bcrypt from 'bcryptjs'; // Import bcrypt for hashing passwords
 
 @Injectable()
 export class PasswordResetService {
@@ -43,11 +41,14 @@ export class PasswordResetService {
     }
 
     // Hash the new password and update user's password
-    const hashedPassword = await bcrypt.hash(newPassword, 12);
-    user.password = hashedPassword;
+    user.password = newPassword;
+    await user.save(); // Password will be hashed in the pre('save') hook
+
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
+
+    console.log('Password successfully reset for user:', user);
 
     return true;
   }

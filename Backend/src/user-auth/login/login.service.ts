@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { User } from '../models/user.model'; // Assuming the User model is in the '../models' directory
+import { User } from '../models/user.model';
 
 @Injectable()
 export class LoginService {
@@ -19,8 +19,14 @@ export class LoginService {
       throw new Error('User not found');
     }
 
+    console.log('Found user:', user);
+    console.log('Password provided:', password);
+    console.log('Hashed password in DB:', user.password);
+
     // Compare hashed passwords
     const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    console.log('Is password valid:', isPasswordValid);
 
     if (!isPasswordValid) {
       throw new Error('Invalid password');
