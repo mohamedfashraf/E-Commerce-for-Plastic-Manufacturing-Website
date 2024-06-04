@@ -19,9 +19,9 @@ export class LoginService {
       throw new Error('User not found');
     }
 
-    console.log('Found user:', user);
-    console.log('Password provided:', password);
-    console.log('Hashed password in DB:', user.password);
+    // console.log('Found user:', user);
+    // console.log('Password provided:', password);
+    // console.log('Hashed password in DB:', user.password);
 
     // Compare hashed passwords
     const isPasswordValid = await bcrypt.compare(password, user.password);
