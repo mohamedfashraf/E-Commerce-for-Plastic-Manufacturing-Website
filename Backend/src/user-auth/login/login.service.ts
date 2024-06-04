@@ -1,33 +1,33 @@
-// login/login.service.ts
-
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { User } from '../models/user.model';
+import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
+import { User } from '../models/user.model'; // Assuming the User model is in the '../models' directory
 
 @Injectable()
 export class LoginService {
   constructor(
-    private readonly jwtService: JwtService,
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    private readonly jwtService: JwtService,
   ) {}
 
   async loginByEmail(email: string, password: string): Promise<string> {
-    // Here, you would typically validate the email and password against your database or any other authentication mechanism
-    // For simplicity, let's assume valid email and password
-    const user = await this.userModel.findOne({ email }).exec();
+    const user = await this.userModel.findOne({ email });
+
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new Error('User not found');
     }
 
-    // Check if the provided password matches the stored password
-    if (user.password !== password) {
-      throw new UnauthorizedException('Invalid credentials');
+    // Compare hashed passwords
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new Error('Invalid password');
     }
 
-    // Generate token upon successful login
-    const token = this.jwtService.sign({ email: user.email });
-    return token;
+    // If password is valid, generate and return JWT token
+    const payload = { email: user.email, sub: user._id };
+    return this.jwtService.sign(payload);
   }
 }

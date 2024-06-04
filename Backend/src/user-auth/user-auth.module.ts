@@ -7,6 +7,7 @@ import { RegisterService } from './register/register.service';
 import { User, UserSchema } from './models/user.model';
 import { JwtModule } from '@nestjs/jwt';
 import * as crypto from 'crypto'; // Import crypto module
+import { LoginService } from './login/login.service'; // Import LoginService
 
 // Generate secret key
 const secretKey = crypto.randomBytes(32).toString('hex');
@@ -23,6 +24,6 @@ console.log(`Generated Secret Key: ${secretKey}`);
     }),
   ],
   controllers: [UserAuthController],
-  providers: [RegisterService],
+  providers: [RegisterService, LoginService], // Add LoginService to providers
 })
 export class UserAuthModule {}
