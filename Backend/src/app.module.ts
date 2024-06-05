@@ -1,7 +1,9 @@
-import { Module } from '@nestjs/common';
+import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { UserAuthModule } from './user-auth/user-auth.module';
+import { JwtAuthMiddleware } from './common/middleware/jwt-auth.middleware'; // Import JwtAuthMiddleware
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -21,8 +23,18 @@ import { UserAuthModule } from './user-auth/user-auth.module';
       },
     ]),
     UserAuthModule,
+    JwtModule.register({
+      secret: 'yourSecretKey',
+      signOptions: { expiresIn: '1h' },
+    }),
   ],
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(JwtAuthMiddleware)
+      .forRoutes('home'); // Apply middleware to Home routes
+  }
+}

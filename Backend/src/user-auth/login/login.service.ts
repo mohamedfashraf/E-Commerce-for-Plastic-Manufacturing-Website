@@ -33,7 +33,7 @@ export class LoginService {
     }
 
     // If password is valid, generate and return JWT token
-    const payload = { email: user.email, sub: user._id };
+    const payload = { userId: user._id,email: user.email };
     return this.jwtService.sign(payload);
   }
 }

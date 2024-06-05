@@ -11,6 +11,7 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/microservices": "^10.3.9",
     "@nestjs/mongoose": "^10.0.6",
+    "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.3.9",
     "@nestjs/testing": "^10.3.9",
     "bcryptjs": "^2.4.3",
@@ -19,7 +20,9 @@
     "kafka-node": "^5.0.0",
     "kafkajs": "^2.2.4",
     "mongoose": "^8.4.1",
-    "nodemailer": "^6.9.13"
+    "nodemailer": "^6.9.13",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
