@@ -43,17 +43,25 @@ const Description = styled.p`
 
 const ButtonGroup = styled.div`
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const ButtonRow = styled.div`
+  display: flex;
   gap: 1rem;
 `;
 
 const Button = styled.button`
-  padding: 0.75rem 1.5rem;
+  padding: ${({ small }) => (small ? '0.5rem 1rem' : '0.75rem 1.5rem')};
   border: 2px solid #000;
   border-radius: 5px;
   cursor: pointer;
   background-color: ${({ bgColor }) => bgColor || 'white'};
   color: ${({ color }) => color || 'black'};
   border-color: ${({ borderColor }) => borderColor || '#000'};
+  font-size: ${({ small }) => (small ? '0.8rem' : '1rem')};
+  width: ${({ small }) => (small ? '120px' : 'auto')};
 
   &:hover {
     opacity: 0.8;
@@ -102,9 +110,14 @@ const HomePage = () => {
             individual, we've got you covered with our wide range of offerings.
           </Description>
           <ButtonGroup>
-            <Button bgColor="green" color="white">Browse Products</Button>
-            <Button bgColor="white" color="green" borderColor="green">Contact Us!</Button>
-            <Button>Learn More</Button>
+            <ButtonRow>
+              <Button bgColor="green" color="white">Browse Products</Button>
+              <Button>Learn More</Button>
+            </ButtonRow>
+            <ButtonRow>
+              <Button small bgColor="white" color="green" borderColor="green" onClick={() => window.location.href = 'http://localhost:3000/signup'}>Sign Up</Button>
+              <Button small bgColor="white" color="green" borderColor="green" onClick={() => window.location.href = 'http://localhost:3000/signin'}>Sign In</Button>
+            </ButtonRow>
           </ButtonGroup>
         </TextContainer>
         <ImageContainer>
