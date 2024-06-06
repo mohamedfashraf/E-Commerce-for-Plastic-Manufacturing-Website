@@ -1,7 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const MainContainer = styled.div`
   display: flex;
@@ -123,6 +124,48 @@ const ImageContainer = styled.div`
 `;
 
 const SignUpPage = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    username: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { firstName, lastName, email, username, password, confirmPassword } = formData;
+
+    if (password !== confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:8000/account/sign-up', { // Ensure this URL is correct
+        firstName,
+        lastName,
+        email,
+        username,
+        password,
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        alert('Registration successful!');
+        // Redirect to another page or clear the form
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      alert('Registration failed. Please try again.');
+    }
+  };
+
   return (
     <MainContainer>
       <Content>
@@ -134,17 +177,19 @@ const SignUpPage = () => {
             </Header>
             <Title>Sign up</Title>
             <Description>Sign up to enjoy the features of our platform.</Description>
-            <form>
-              <label htmlFor="name">Your Name</label>
-              <Input type="text" id="name" name="name" required />
-              <label htmlFor="dob">Date of Birth</label>
-              <Input type="date" id="dob" name="dob" required />
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="firstName">First Name</label>
+              <Input type="text" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
+              <label htmlFor="lastName">Last Name</label>
+              <Input type="text" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
               <label htmlFor="email">Email</label>
-              <Input type="email" id="email" name="email" required />
+              <Input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
+              <label htmlFor="username">Username</label>
+              <Input type="text" id="username" name="username" value={formData.username} onChange={handleChange} required />
               <label htmlFor="password">Password</label>
-              <Input type="password" id="password" name="password" required />
-              <label htmlFor="confirm-password">Confirm Password</label>
-              <Input type="password" id="confirm-password" name="confirm-password" required />
+              <Input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+              <label htmlFor="confirmPassword">Confirm Password</label>
+              <Input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required />
               <Button type="submit">Sign up</Button>
               <Divider>or</Divider>
               <Button $bgColor="#fff" $color="#4285F4" $border="1px solid #ccc" $hoverColor="#f0f0f0">
