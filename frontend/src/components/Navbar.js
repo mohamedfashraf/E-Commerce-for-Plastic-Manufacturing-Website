@@ -5,6 +5,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link'; // Import Link from Next.js
 
 const Nav = styled.nav`
   display: flex;
@@ -94,7 +95,12 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
       </Logo>
       <NavLinks>
         <SearchBar type="text" placeholder="Search essentials, groceries and more..." />
-        <IconButton><FontAwesomeIcon icon={faUser} /></IconButton>
+        {/* Use Next.js's Link */}
+        <Link href="/profile">
+          <IconButton>
+            <FontAwesomeIcon icon={faUser} />
+          </IconButton>
+        </Link>
         <IconButton><FontAwesomeIcon icon={faShoppingCart} /></IconButton>
         <SwitchContainer className="switch">
           <SwitchInput type="checkbox" checked={isDarkTheme} onChange={toggleTheme} />
