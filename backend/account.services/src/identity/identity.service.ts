@@ -20,7 +20,7 @@ import { CreateGuestIdentityDto } from './dto/guest.identity.dto';
 
 @Injectable()
 export class IdentityService {
-  private readonly logger = new Logger(IdentityService.name);
+  private readonly logger =  new Logger(IdentityService.name);
   hello: any;
 
   constructor(
