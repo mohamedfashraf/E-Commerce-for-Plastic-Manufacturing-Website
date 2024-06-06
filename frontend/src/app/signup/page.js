@@ -135,12 +135,14 @@ const SignUpPage = () => {
             <Title>Sign up</Title>
             <Description>Sign up to enjoy the features of our platform.</Description>
             <form>
-              <label htmlFor="name">Your Name</label>
-              <Input type="text" id="name" name="name" required />
-              <label htmlFor="dob">Date of Birth</label>
-              <Input type="date" id="dob" name="dob" required />
+              <label htmlFor="first-name">First Name</label>
+              <Input type="text" id="first-name" name="first-name" required />
+              <label htmlFor="last-name">Last Name</label>
+              <Input type="text" id="last-name" name="last-name" required />
               <label htmlFor="email">Email</label>
               <Input type="email" id="email" name="email" required />
+              <label htmlFor="username">Username</label>
+              <Input type="text" id="username" name="username" required />
               <label htmlFor="password">Password</label>
               <Input type="password" id="password" name="password" required />
               <label htmlFor="confirm-password">Confirm Password</label>
