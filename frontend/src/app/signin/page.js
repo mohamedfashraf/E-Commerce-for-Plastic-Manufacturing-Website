@@ -1,8 +1,8 @@
-// src/app/signin/page.js
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 const MainContainer = styled.div`
   display: flex;
@@ -89,7 +89,7 @@ const Button = styled.button`
   }
 
   img {
-    width: 20px; /* Adjust the size of the Google icon */
+    width: 20px;
     height: 20px;
     margin-right: 0.5rem;
   }
@@ -123,7 +123,63 @@ const ImageContainer = styled.div`
   background-size: cover;
 `;
 
+const PopUp = styled.div`
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 1rem;
+  background-color: ${({ $type }) => ($type === 'success' ? '#28a745' : '#dc3545')};
+  color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+`;
+
 const SignInPage = () => {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: '',
+  });
+
+  const [showSuccessPopUp, setShowSuccessPopUp] = useState(false);
+  const [showErrorPopUp, setShowErrorPopUp] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { username, password } = formData;
+
+    try {
+      const response = await axios.post('http://localhost:8000/account/sign-in', {
+        username,
+        password,
+      });
+
+      if (response.status === 200) {
+        console.log('Sign in successful!');
+        const userDetails = response.data.userDetails;
+        if (userDetails) {
+          console.log('User Name:', userDetails.firstName);
+        }
+        setShowSuccessPopUp(true);
+        setTimeout(() => {
+          setShowSuccessPopUp(false);
+          // Redirect to the /home page after successful sign-in
+          window.location.href = 'http://localhost:3000/home';
+        }, 3000); // Hide success pop-up after 3 seconds
+      }
+    } catch (error) {
+      console.error('Sign in error:', error);
+      setShowErrorPopUp(true);
+      setTimeout(() => setShowErrorPopUp(false), 3000); // Hide error pop-up after 3 seconds
+    }
+  };
+
   return (
     <MainContainer>
       <Content>
@@ -135,15 +191,11 @@ const SignInPage = () => {
             </Header>
             <Title>Sign in</Title>
             <Description>Please login to continue to your account.</Description>
-            <form>
-              <label htmlFor="email">Email</label>
-              <Input type="email" id="email" name="email" required />
+            <form onSubmit={handleSubmit}>
+              <label htmlFor="username">Username</label>
+              <Input type="text" id="username" name="username" value={formData.username} onChange={handleChange} required />
               <label htmlFor="password">Password</label>
-              <Input type="password" id="password" name="password" required />
-              <div style={{ marginBottom: '1rem' }}>
-                <input type="checkbox" id="keep-logged-in" name="keep-logged-in" />
-                <label htmlFor="keep-logged-in" style={{ marginLeft: '0.5rem' }}>Keep me logged in</label>
-              </div>
+              <Input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
               <Button type="submit">Sign in</Button>
               <Divider>or</Divider>
               <Button $bgColor="#fff" $color="#4285F4" $border="1px solid #ccc" $hoverColor="#f0f0f0">
@@ -156,6 +208,8 @@ const SignInPage = () => {
           <ImageContainer />
         </SignInContainer>
       </Content>
+      {showSuccessPopUp && <PopUp $type="success">Sign in successful!</PopUp>}
+      {showErrorPopUp && <PopUp $type="error">Sign in failed. Please check your credentials and try again.</PopUp>}
     </MainContainer>
   );
 };
