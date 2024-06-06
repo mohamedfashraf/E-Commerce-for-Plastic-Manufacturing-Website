@@ -15,7 +15,7 @@ const Content = styled.main`
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center;s
   padding: 2rem;
   position: relative;
 `;

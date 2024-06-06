@@ -81,14 +81,14 @@ const StatusBadge = styled.span`
     status === 'Completed'
       ? 'green'
       : status === 'Cancelled'
-      ? 'red'
-      : 'yellow'};
+        ? 'red'
+        : 'yellow'};
   color: ${({ status }) =>
     status === 'Completed'
       ? '#fff'
       : status === 'Cancelled'
-      ? '#fff'
-      : '#000'};
+        ? '#fff'
+        : '#000'};
 `;
 
 const Pagination = styled.div`
