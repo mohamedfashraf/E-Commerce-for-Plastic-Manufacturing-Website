@@ -15,7 +15,7 @@ const Content = styled.main`
   flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;s
+  align-items: center;
   padding: 2rem;
   position: relative;
 `;
@@ -202,6 +202,9 @@ const SignInPage = () => {
                 <img src="/google.png" alt="Google" />
                 Sign in with Google
               </Button>
+              <p style={{ marginTop: '1rem', textAlign: 'center' }}>
+                <a href="/password-reset" style={{ color: '#007bff', textDecoration: 'underline' }}>Forgot Password?</a>
+              </p>
             </form>
             <p style={{ marginTop: '1rem', textAlign: 'center' }}>Need an account? <a href="/signup" style={{ color: '#007bff', textDecoration: 'underline' }}>Create one</a></p>
           </FormContainer>
