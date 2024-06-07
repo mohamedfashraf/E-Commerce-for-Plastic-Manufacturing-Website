@@ -6,6 +6,8 @@ import Navbar from '../../components/Navbar'; // Adjust the path to your Navbar 
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center; /* Center everything vertically */
+  align-items: center; /* Center everything horizontally */
   min-height: 100vh;
   background-color: #f8f8f8;
   color: #000;
@@ -30,7 +32,6 @@ const Container = styled.div`
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   position: relative;
-  margin: 80px auto;
   z-index: 2; /* Ensure this is above the ImageContainer */
 `;
 

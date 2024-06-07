@@ -1,9 +1,7 @@
 // src/app/page.js
 "use client";
 
-// src/app/page.js
-"use client";
-
+import Link from 'next/link';
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Navbar from '../../components/Navbar';
@@ -95,42 +93,44 @@ const ImageContainer = styled.div`
 `;
 
 const HomePage = () => {
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
-    const toggleTheme = () => {
-        setIsDarkTheme(!isDarkTheme);
-        document.body.classList.toggle('dark-theme', !isDarkTheme);
-    };
+  const toggleTheme = () => {
+    setIsDarkTheme(!isDarkTheme);
+    document.body.classList.toggle('dark-theme', !isDarkTheme);
+  };
 
-    return (
-        <MainContainer>
-            <Navbar toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} />
-            <Content>
-                <TextContainer>
-                    <WelcomeText>Welcome to Plastic Pallets E-commerce!</WelcomeText>
-                    <Description>
-                        At Plastic Pallets E-commerce, we specialize in providing top-quality plastic pallets
-                        tailored to your specific needs. Whether you're a factory, small business, or an
-                        individual, we've got you covered with our wide range of offerings.
-                    </Description>
-                    <ButtonGroup>
-                        <ButtonRow>
-                            <Button bgColor="green" color="white">Browse Products</Button>
-                            <Button>Learn More</Button>
-                        </ButtonRow>
-                    </ButtonGroup>
-                </TextContainer>
-                <ImageContainer>
-                    <img
-                        src="factory.png"
-                        className="absolute top-[210px] left-[300px] w-[559px] h-[400px] z-[7]"
-                        loading="lazy"
-                        alt="Factory Image"
-                    />
-                </ImageContainer>
-            </Content>
-        </MainContainer>
-    );
+  return (
+    <MainContainer>
+      <Navbar toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} />
+      <Content>
+        <TextContainer>
+          <WelcomeText>Welcome to Plastic Pallets E-commerce!</WelcomeText>
+          <Description>
+            At Plastic Pallets E-commerce, we specialize in providing top-quality plastic pallets
+            tailored to your specific needs. Whether you're a factory, small business, or an
+            individual, we've got you covered with our wide range of offerings.
+          </Description>
+          <ButtonGroup>
+            <ButtonRow>
+              <Link href="/products" passHref>
+                <Button bgColor="green" color="white">Browse Products</Button>
+              </Link>
+              <Button>Learn More</Button>
+            </ButtonRow>
+          </ButtonGroup>
+        </TextContainer>
+        <ImageContainer>
+          <img
+            src="factory.png"
+            className="absolute top-[210px] left-[300px] w-[559px] h-[400px] z-[7]"
+            loading="lazy"
+            alt="Factory Image"
+          />
+        </ImageContainer>
+      </Content>
+    </MainContainer>
+  );
 };
 
 export default HomePage;

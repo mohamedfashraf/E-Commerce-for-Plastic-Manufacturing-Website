@@ -1,11 +1,8 @@
-// src/components/Navbar.js
-"use client";
-
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link'; // Import Link from Next.js
+import Link from 'next/link';
 
 const Nav = styled.nav`
   display: flex;
@@ -17,15 +14,17 @@ const Nav = styled.nav`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Logo = styled.div`
+const LogoLink = styled.a`
   display: flex;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
+  text-decoration: none;
+  color: inherit;
+`;
 
-  img {
-    height: 40px;
-    margin-right: 10px;
-  }
+const LogoImage = styled.img`
+  height: 50px; /* Adjust the height as needed */
+  margin-right: 10px;
 `;
 
 const NavLinks = styled.div`
@@ -53,41 +52,22 @@ const IconButton = styled.button`
 
 const DropdownMenu = styled.div`
   position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%);
+  top: calc(100% + 10px);
+  right: 0;
   background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  overflow: hidden;
+  padding: 0.5rem;
   z-index: 1000;
-  margin-top: 0.5rem;
-  width: 200px; /* Set a width for better alignment */
-  padding: 0.5rem 0;
-  transition: all 0.3s ease-in-out; /* Smooth transition for dropdown */
+  display: ${({ open }) => (open ? 'block' : 'none')};
 `;
 
-const DropdownItem = styled.a`
-  display: block;
-  padding: 0.75rem 1rem;
-  color: var(--nav-text-color);
-  text-decoration: none;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background 0.3s;
-
+const DropdownItem = styled.div`
+  padding: 0.5rem;
+  font-size: 0.9rem;
   &:hover {
-    background-color: #f0f0f0;
-  }
-
-  &.active {
-    background-color: #0056b3;
-    color: white;
-  }
-
-  &.divider {
-    border-top: 1px solid #e0e0e0;
-    margin: 0.5rem 0;
+    background-color: #f4f4f4;
+    cursor: pointer;
   }
 `;
 
@@ -141,35 +121,41 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
 
   return (
     <Nav>
-      <Logo>
-        <img src="/logo.png" alt="Logo" />
+      <LogoLink href="/home">
+        <LogoImage src="/logo.png" alt="Logo" />
         E-Commerce for Plastic Manufacturing
-      </Logo>
+      </LogoLink>
       <NavLinks>
         <SearchBar type="text" placeholder="Search essentials, groceries and more..." />
-        {/* Use Next.js's Link */}
         <IconButton onClick={handleProfileClick}>
           <FontAwesomeIcon icon={faUser} />
-          {dropdownOpen && (
-            <DropdownMenu>
+          <DropdownMenu open={dropdownOpen}>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/profile" passHref>
-                <DropdownItem onClick={handleItemClick}>My Profile</DropdownItem>
+                My Profile
               </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/orders" passHref>
-                <DropdownItem onClick={handleItemClick}>My Orders</DropdownItem>
+                My Orders
               </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/favourites" passHref>
-                <DropdownItem onClick={handleItemClick}>Favourites</DropdownItem>
+                Favourites
               </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/wishlist" passHref>
-                <DropdownItem onClick={handleItemClick}>Wishlist</DropdownItem>
+                Wishlist
               </Link>
-              <DropdownItem className="divider" />
-              <Link href="/logout" passHref>
-                <DropdownItem onClick={handleItemClick}>Logout</DropdownItem>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/signin" passHref>
+                Logout
               </Link>
-            </DropdownMenu>
-          )}
+            </DropdownItem>
+          </DropdownMenu>
         </IconButton>
         <Link href="/shoppingcart" passHref>
           <IconButton>
