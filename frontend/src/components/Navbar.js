@@ -151,7 +151,7 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
               </Link>
             </DropdownItem>
             <DropdownItem onClick={handleItemClick}>
-              <Link href="/logout" passHref>
+              <Link href="/signin" passHref>
                 Logout
               </Link>
             </DropdownItem>
