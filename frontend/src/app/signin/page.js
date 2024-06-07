@@ -151,21 +151,34 @@ const SignInPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { username, password } = formData;
+    event.preventDefault();
+    if (!formData.username.trim() || !formData.password.trim()) {
+      setError("Both username and password are required.");
+      return;
+    }
 
     try {
-      const response = await axios.post('http://localhost:8000/account/sign-in', {
-        username,
-        password,
+      const response = await fetch("http://localhost:8000/account/sign-in", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+
+
+        body: JSON.stringify({
+          username: formData.username,
+          password: formData.password,
+        }),
       });
 
-      if (response.status === 200) {
-        console.log('Sign in successful!');
-        const userDetails = response.data.userDetails;
-        if (userDetails) {
-          console.log('User Name:', userDetails.firstName);
-        }
+      const data = await response.json();
+      if (response.ok) {
+        console.log("Login successful", data);
+
+        const token = data.accessToken;
+        localStorage.setItem("token", token);
+        document.cookie = `auth_token=${token}; path=/; max-age=86400; secure; samesite=strict;`;
         setShowSuccessPopUp(true);
         setTimeout(() => {
           setShowSuccessPopUp(false);
