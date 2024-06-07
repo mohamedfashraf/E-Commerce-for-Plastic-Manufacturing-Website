@@ -5,7 +5,8 @@ import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import Link from 'next/link'; // Import Link from Next.js
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // Use the correct import for useRouter in Next.js
 
 const Nav = styled.nav`
   display: flex;
@@ -51,42 +52,6 @@ const IconButton = styled.button`
   position: relative;
 `;
 
-const DropdownMenu = styled.div`
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  overflow: hidden;
-  z-index: 1000;
-  margin-top: 0.5rem;
-`;
-
-const DropdownItem = styled.a`
-  display: block;
-  padding: 0.5rem 1rem;
-  color: var(--nav-text-color);
-  text-decoration: none;
-  font-size: 0.875rem;
-  cursor: pointer;
-  transition: background 0.3s;
-
-  &:hover {
-    background-color: #f0f0f0;
-  }
-
-  &.active {
-    background-color: #0056b3;
-    color: white;
-  }
-
-  &.divider {
-    border-top: 1px solid #e0e0e0;
-    padding-top: 0.5rem;
-  }
-`;
-
 const SwitchContainer = styled.label`
   font-size: 17px;
   position: relative;
@@ -123,15 +88,50 @@ const Slider = styled.span`
   }
 `;
 
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 2.5rem;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  display: ${({ show }) => (show ? 'block' : 'none')};
+`;
+
+const DropdownItem = styled.div`
+  padding: 0.5rem 1rem;
+  color: var(--nav-text-color);
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.active {
+    background-color: #0056b3;
+    color: white;
+  }
+
+  &.divider {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.5rem;
+  }
+`;
+
 const Navbar = ({ toggleTheme, isDarkTheme }) => {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const router = useRouter();
 
-  const handleProfileClick = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
-
-  const handleItemClick = () => {
-    setDropdownOpen(false);
+  const handleLogout = () => {
+    // Remove the token (assuming it is stored in localStorage)
+    localStorage.removeItem('token');
+    // Redirect to the main page
+    router.push('/');
   };
 
   return (
@@ -142,31 +142,27 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
       </Logo>
       <NavLinks>
         <SearchBar type="text" placeholder="Search essentials, groceries and more..." />
-        {/* Use Next.js's Link */}
-        <IconButton onClick={handleProfileClick}>
+        <IconButton onClick={() => setShowDropdown(!showDropdown)}>
           <FontAwesomeIcon icon={faUser} />
-          {dropdownOpen && (
-            <DropdownMenu>
-              <Link href="/profile" passHref>
-                <DropdownItem onClick={handleItemClick}>My Profile</DropdownItem>
-              </Link>
-              <Link href="/orders" passHref>
-                <DropdownItem onClick={handleItemClick}>My Orders</DropdownItem>
-              </Link>
-              <Link href="/favourites" passHref>
-                <DropdownItem onClick={handleItemClick}>Favourites</DropdownItem>
-              </Link>
-              <Link href="/wishlist" passHref>
-                <DropdownItem onClick={handleItemClick}>Wishlist</DropdownItem>
-              </Link>
-              <DropdownItem className="divider" />
-              <Link href="/logout" passHref>
-                <DropdownItem onClick={handleItemClick}>Logout</DropdownItem>
-              </Link>
-            </DropdownMenu>
-          )}
+          <DropdownMenu show={showDropdown}>
+            <Link href="/profile" passHref>
+              <DropdownItem>My Profile</DropdownItem>
+            </Link>
+            <Link href="/orders" passHref>
+              <DropdownItem>My Orders</DropdownItem>
+            </Link>
+            <Link href="/favourites" passHref>
+              <DropdownItem>Favourites</DropdownItem>
+            </Link>
+            <Link href="/wishlist" passHref>
+              <DropdownItem>Wishlist</DropdownItem>
+            </Link>
+            <DropdownItem onClick={handleLogout}>Logout</DropdownItem>
+          </DropdownMenu>
         </IconButton>
-        <IconButton><FontAwesomeIcon icon={faShoppingCart} /></IconButton>
+        <IconButton>
+          <FontAwesomeIcon icon={faShoppingCart} />
+        </IconButton>
         <SwitchContainer className="switch">
           <SwitchInput type="checkbox" checked={isDarkTheme} onChange={toggleTheme} />
           <Slider className="slider" isDarkTheme={isDarkTheme} />
