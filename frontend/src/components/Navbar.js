@@ -166,7 +166,11 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
             </DropdownMenu>
           )}
         </IconButton>
-        <IconButton><FontAwesomeIcon icon={faShoppingCart} /></IconButton>
+        <Link href="/shoppingcart" passHref>
+          <IconButton>
+            <FontAwesomeIcon icon={faShoppingCart} />
+          </IconButton>
+        </Link>
         <SwitchContainer className="switch">
           <SwitchInput type="checkbox" checked={isDarkTheme} onChange={toggleTheme} />
           <Slider className="slider" isDarkTheme={isDarkTheme} />
