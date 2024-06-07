@@ -54,18 +54,22 @@ const IconButton = styled.button`
 const DropdownMenu = styled.div`
   position: absolute;
   top: 100%;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   background-color: white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
   z-index: 1000;
   margin-top: 0.5rem;
+  width: 200px; /* Set a width for better alignment */
+  padding: 0.5rem 0;
+  transition: all 0.3s ease-in-out; /* Smooth transition for dropdown */
 `;
 
 const DropdownItem = styled.a`
   display: block;
-  padding: 0.5rem 1rem;
+  padding: 0.75rem 1rem;
   color: var(--nav-text-color);
   text-decoration: none;
   font-size: 0.875rem;
@@ -83,7 +87,7 @@ const DropdownItem = styled.a`
 
   &.divider {
     border-top: 1px solid #e0e0e0;
-    padding-top: 0.5rem;
+    margin: 0.5rem 0;
   }
 `;
 
@@ -120,6 +124,7 @@ const Slider = styled.span`
     background-color: white;
     border-radius: inherit;
     transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    transform: ${({ isDarkTheme }) => (isDarkTheme ? 'translateX(1.5em)' : 'translateX(0)')};
   }
 `;
 
