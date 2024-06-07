@@ -1,7 +1,7 @@
 // src/components/Navbar.js
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
@@ -48,6 +48,43 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 1000;
+  margin-top: 0.5rem;
+`;
+
+const DropdownItem = styled.a`
+  display: block;
+  padding: 0.5rem 1rem;
+  color: var(--nav-text-color);
+  text-decoration: none;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.3s;
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &.active {
+    background-color: #0056b3;
+    color: white;
+  }
+
+  &.divider {
+    border-top: 1px solid #e0e0e0;
+    padding-top: 0.5rem;
+  }
 `;
 
 const SwitchContainer = styled.label`
@@ -87,6 +124,16 @@ const Slider = styled.span`
 `;
 
 const Navbar = ({ toggleTheme, isDarkTheme }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleProfileClick = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleItemClick = () => {
+    setDropdownOpen(false);
+  };
+
   return (
     <Nav>
       <Logo>
@@ -96,11 +143,29 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
       <NavLinks>
         <SearchBar type="text" placeholder="Search essentials, groceries and more..." />
         {/* Use Next.js's Link */}
-        <Link href="/profile">
-          <IconButton>
-            <FontAwesomeIcon icon={faUser} />
-          </IconButton>
-        </Link>
+        <IconButton onClick={handleProfileClick}>
+          <FontAwesomeIcon icon={faUser} />
+          {dropdownOpen && (
+            <DropdownMenu>
+              <Link href="/profile" passHref>
+                <DropdownItem onClick={handleItemClick}>My Profile</DropdownItem>
+              </Link>
+              <Link href="/orders" passHref>
+                <DropdownItem onClick={handleItemClick}>My Orders</DropdownItem>
+              </Link>
+              <Link href="/favourites" passHref>
+                <DropdownItem onClick={handleItemClick}>Favourites</DropdownItem>
+              </Link>
+              <Link href="/wishlist" passHref>
+                <DropdownItem onClick={handleItemClick}>Wishlist</DropdownItem>
+              </Link>
+              <DropdownItem className="divider" />
+              <Link href="/logout" passHref>
+                <DropdownItem onClick={handleItemClick}>Logout</DropdownItem>
+              </Link>
+            </DropdownMenu>
+          )}
+        </IconButton>
         <IconButton><FontAwesomeIcon icon={faShoppingCart} /></IconButton>
         <SwitchContainer className="switch">
           <SwitchInput type="checkbox" checked={isDarkTheme} onChange={toggleTheme} />
