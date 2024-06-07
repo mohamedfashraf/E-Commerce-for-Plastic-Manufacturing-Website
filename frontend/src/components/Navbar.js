@@ -1,4 +1,3 @@
-// src/components/Navbar.js
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -49,6 +48,27 @@ const IconButton = styled.button`
   align-items: center;
   justify-content: center;
   position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem;
+  z-index: 1000;
+  display: ${({ open }) => (open ? 'block' : 'none')};
+`;
+
+const DropdownItem = styled.div`
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  &:hover {
+    background-color: #f4f4f4;
+    cursor: pointer;
+  }
 `;
 
 const SwitchContainer = styled.label`
@@ -109,27 +129,33 @@ const Navbar = ({ toggleTheme, isDarkTheme }) => {
         <SearchBar type="text" placeholder="Search essentials, groceries and more..." />
         <IconButton onClick={handleProfileClick}>
           <FontAwesomeIcon icon={faUser} />
-          {dropdownOpen && (
-            <div>
+          <DropdownMenu open={dropdownOpen}>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/profile" passHref>
-                <a onClick={handleItemClick}>My Profile</a>
+                My Profile
               </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/orders" passHref>
-                <a onClick={handleItemClick}>My Orders</a>
+                My Orders
               </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/favourites" passHref>
-                <a onClick={handleItemClick}>Favourites</a>
+                Favourites
               </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
               <Link href="/wishlist" passHref>
-                <a onClick={handleItemClick}>Wishlist</a>
+                Wishlist
               </Link>
-              <div>
-                <Link href="/logout" passHref>
-                  <a onClick={handleItemClick}>Logout</a>
-                </Link>
-              </div>
-            </div>
-          )}
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/logout" passHref>
+                Logout
+              </Link>
+            </DropdownItem>
+          </DropdownMenu>
         </IconButton>
         <Link href="/shoppingcart" passHref>
           <IconButton>
