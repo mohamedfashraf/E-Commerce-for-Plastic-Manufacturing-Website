@@ -2,6 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { useRouter } from 'next/navigation';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart, faHeart, faStar } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../../components/Navbar';
 
 const MainContainer = styled.div`
@@ -54,6 +57,7 @@ const ProductCard = styled.div`
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   text-align: center;
+  cursor: pointer;
 
   img {
     max-width: 100%;
@@ -77,14 +81,15 @@ const ProductCard = styled.div`
 
     button {
       padding: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      border: none;
+      background: none;
       cursor: pointer;
-      background-color: #28a745;
-      color: #fff;
+      color: #28a745;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
 
       &:hover {
-        background-color: #218838;
+        color: #218838;
       }
     }
   }
@@ -92,14 +97,11 @@ const ProductCard = styled.div`
 
 const Pagination = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   padding-top: 1rem;
   border-top: 1px solid #ccc;
-  position: absolute;
-  bottom: 1rem;
-  left: 2rem;
-  right: 2rem;
+  margin-top: 1rem;
 `;
 
 const PageButton = styled.button`
@@ -109,6 +111,7 @@ const PageButton = styled.button`
   color: #fff;
   border-radius: 5px;
   cursor: pointer;
+  margin: 0 0.25rem;
 
   &:hover {
     background-color: #218838;
@@ -143,6 +146,7 @@ const AllProductsPage = () => {
   const [error, setError] = useState(null);
   const productsPerPage = 8;
   const images = ['pallet1.svg', 'pallet2.svg', 'pallet3.svg', 'pallet4.svg'];
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -182,6 +186,10 @@ const AllProductsPage = () => {
     return <p>Error fetching products: {error.message}</p>;
   }
 
+  const handleProductClick = (productId) => {
+    router.push(`/product-view/${productId}`);
+  };
+
   return (
     <MainContainer>
       <Navbar />
@@ -190,43 +198,46 @@ const AllProductsPage = () => {
           <Title>Products</Title>
           <GridContainer>
             {currentProducts.map((product) => (
-              <ProductCard key={product.id}>
+              <ProductCard key={product._id} onClick={() => handleProductClick(product._id)}>
                 <img src={`/${product.image}`} alt={product.name} />
                 <h3>{product.name}</h3>
                 <p>{product.description}</p>
                 <div className="buttons">
-                  <button>Add to Cart</button>
-                  <button>Add to Wishlist</button>
-                  <button>Add to Favorites</button>
+                  <button>
+                    <FontAwesomeIcon icon={faShoppingCart} title="Add to Cart" />
+                  </button>
+                  <button>
+                    <FontAwesomeIcon icon={faHeart} title="Add to Wishlist" />
+                  </button>
+                  <button>
+                    <FontAwesomeIcon icon={faStar} title="Add to Favorites" />
+                  </button>
                 </div>
               </ProductCard>
             ))}
           </GridContainer>
           <Pagination>
-            <span>Showing {indexOfFirstProduct + 1} to {Math.min(indexOfLastProduct, products.length)} of {products.length} records</span>
-            <div>
+            <PageButton
+              onClick={() => paginate(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              &lt;
+            </PageButton>
+            {[...Array(totalPages)].map((_, index) => (
               <PageButton
-                onClick={() => paginate(currentPage - 1)}
-                disabled={currentPage === 1}
+                key={index}
+                onClick={() => paginate(index + 1)}
+                disabled={currentPage === index + 1}
               >
-                &lt;
+                {index + 1}
               </PageButton>
-              {[...Array(totalPages)].map((_, index) => (
-                <PageButton
-                  key={index}
-                  onClick={() => paginate(index + 1)}
-                  disabled={currentPage === index + 1}
-                >
-                  {index + 1}
-                </PageButton>
-              ))}
-              <PageButton
-                onClick={() => paginate(currentPage + 1)}
-                disabled={currentPage === totalPages || products.length <= productsPerPage}
-              >
-                &gt;
-              </PageButton>
-            </div>
+            ))}
+            <PageButton
+              onClick={() => paginate(currentPage + 1)}
+              disabled={currentPage === totalPages || products.length <= productsPerPage}
+            >
+              &gt;
+            </PageButton>
           </Pagination>
         </FavouritesContainer>
         <ImageContainer />
