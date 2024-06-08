@@ -111,7 +111,9 @@ const HomePage = () => {
           </Description>
           <ButtonGroup>
             <ButtonRow>
-              <Button bgColor="green" color="white">Browse Products</Button>
+              <Link href="/all-products" passHref>
+                <Button bgColor="green" color="white">Browse Products</Button>
+              </Link>
               <Button>Learn More</Button>
             </ButtonRow>
             <ButtonRow>
