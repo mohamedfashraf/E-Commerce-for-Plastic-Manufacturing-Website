@@ -1,10 +1,8 @@
-// src/components/Navbar.js
-"use client";
-
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import Link from 'next/link';
 
 const Nav = styled.nav`
   display: flex;
@@ -16,15 +14,17 @@ const Nav = styled.nav`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
-const Logo = styled.div`
+const LogoLink = styled.a`
   display: flex;
   align-items: center;
-  font-size: 1.5rem;
+  font-size: 1rem;
+  text-decoration: none;
+  color: inherit;
+`;
 
-  img {
-    height: 40px;
-    margin-right: 10px;
-  }
+const LogoImage = styled.img`
+  height: 50px; /* Adjust the height as needed */
+  margin-right: 10px;
 `;
 
 const NavLinks = styled.div`
@@ -47,6 +47,28 @@ const IconButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+`;
+
+const DropdownMenu = styled.div`
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 0.5rem;
+  z-index: 1000;
+  display: ${({ open }) => (open ? 'block' : 'none')};
+`;
+
+const DropdownItem = styled.div`
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  &:hover {
+    background-color: #f4f4f4;
+    cursor: pointer;
+  }
 `;
 
 const SwitchContainer = styled.label`
@@ -82,20 +104,64 @@ const Slider = styled.span`
     background-color: white;
     border-radius: inherit;
     transition: all 0.4s cubic-bezier(0.23, 1, 0.320, 1);
+    transform: ${({ isDarkTheme }) => (isDarkTheme ? 'translateX(1.5em)' : 'translateX(0)')};
   }
 `;
 
 const Navbar = ({ toggleTheme, isDarkTheme }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleProfileClick = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleItemClick = () => {
+    setDropdownOpen(false);
+  };
+
   return (
     <Nav>
-      <Logo>
-        <img src="/logo.png" alt="Logo" />
+      <LogoLink href="/home">
+        <LogoImage src="/logo.png" alt="Logo" />
         E-Commerce for Plastic Manufacturing
-      </Logo>
+      </LogoLink>
       <NavLinks>
         <SearchBar type="text" placeholder="Search essentials, groceries and more..." />
-        <IconButton><FontAwesomeIcon icon={faUser} /></IconButton>
-        <IconButton><FontAwesomeIcon icon={faShoppingCart} /></IconButton>
+        <IconButton onClick={handleProfileClick}>
+          <FontAwesomeIcon icon={faUser} />
+          <DropdownMenu open={dropdownOpen}>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/profile" passHref>
+                My Profile
+              </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/orders" passHref>
+                My Orders
+              </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/favourites" passHref>
+                Favourites
+              </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/wishlist" passHref>
+                Wishlist
+              </Link>
+            </DropdownItem>
+            <DropdownItem onClick={handleItemClick}>
+              <Link href="/signin" passHref>
+                Logout
+              </Link>
+            </DropdownItem>
+          </DropdownMenu>
+        </IconButton>
+        <Link href="/shoppingcart" passHref>
+          <IconButton>
+            <FontAwesomeIcon icon={faShoppingCart} />
+          </IconButton>
+        </Link>
         <SwitchContainer className="switch">
           <SwitchInput type="checkbox" checked={isDarkTheme} onChange={toggleTheme} />
           <Slider className="slider" isDarkTheme={isDarkTheme} />

@@ -20,7 +20,7 @@ import { CreateGuestIdentityDto } from './dto/guest.identity.dto';
 
 @Injectable()
 export class IdentityService {
-  private readonly logger =  new Logger(IdentityService.name);
+  private readonly logger = new Logger(IdentityService.name);
   hello: any;
 
   constructor(
@@ -143,7 +143,7 @@ export class IdentityService {
     }
 
     this.logger.debug(`User ${user._id} authenticated successfully`);
-    return this.stripSensitiveDetails(user.toObject());
+    return user; // Return the complete user object
   }
 
   private stripSensitiveDetails(user: any): any {
@@ -170,41 +170,34 @@ export class IdentityService {
 
   async login(
     loginDto: LoginDto,
-  ): Promise<{ success: boolean; accessToken?: string }> {
+  ): Promise<{ success: boolean; userDetails?: any; accessToken?: string }> {
     const user = await this.validateUser(loginDto);
     if (!user) {
       return { success: false };
     }
 
-    // Prepare the payload
     const payload = {
-      id: user.id, // Unique identifier for the user
+      id: user.id,
       username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      phoneNumber: user.phoneNumber, // Optional field
-      company: user.company, // Optional field
       shippingAddresses: user.shippingAddresses,
-      isEmailVerified: user.isEmailVerified, // Default is false, optional
-      passwordResetToken: user.passwordResetToken, // Optional for password resets
-      passwordResetExpires: user.passwordResetExpires, // Optional for password resets
+      isEmailVerified: user.isEmailVerified,
     };
 
-    // Sign the JWT with the payload that now includes extended user data
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET || 'secretKey_YoucANWritewhateveryoulikey',
-      expiresIn: '1h', // Token expiration time
+      expiresIn: '1h',
     });
 
-    // Optional: Send user details to other services via Kafka
     await this.kafkaService.sendMessage('user-logged-in', {
       userId: user.id.toString(),
-      userDetails: this.prepareUserData(user),
+      userDetails: payload,
       token: accessToken,
     });
 
-    return { success: true, accessToken };
+    return { success: true, userDetails: payload, accessToken };
   }
 
   // Ensure that the prepareUserData method does not strip out data you now want to include in the JWT

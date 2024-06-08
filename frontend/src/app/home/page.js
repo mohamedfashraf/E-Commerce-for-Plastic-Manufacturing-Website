@@ -1,9 +1,10 @@
 // src/app/page.js
 "use client";
 
+import Link from 'next/link';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import Navbar from '../components/Navbar';
+import Navbar from '../../components/Navbar';
 
 const MainContainer = styled.div`
   display: flex;
@@ -50,6 +51,7 @@ const ButtonGroup = styled.div`
 const ButtonRow = styled.div`
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
 `;
 
 const Button = styled.button`
@@ -111,12 +113,10 @@ const HomePage = () => {
           </Description>
           <ButtonGroup>
             <ButtonRow>
-              <Button bgColor="green" color="white">Browse Products</Button>
+              <Link href="/products" passHref>
+                <Button bgColor="green" color="white">Browse Products</Button>
+              </Link>
               <Button>Learn More</Button>
-            </ButtonRow>
-            <ButtonRow>
-              <Button small bgColor="white" color="green" borderColor="green" onClick={() => window.location.href = 'http://localhost:3000/signup'}>Sign Up</Button>
-              <Button small bgColor="white" color="green" borderColor="green" onClick={() => window.location.href = 'http://localhost:3000/signin'}>Sign In</Button>
             </ButtonRow>
           </ButtonGroup>
         </TextContainer>

@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
-import Navbar from '../../components/Navbar';
+import React, { useEffect, useState }, { useEffect, useState } from 'react';
+import Navbar from '../../../components/Navbar';
 
 const createPage = () => {
-  return `
+    return `
     <style>
       body, html {
         margin: 0;
@@ -338,9 +338,7 @@ const createPage = () => {
 const Page = () => {
   return (
     <div>
-      <div id="navbar">
-        <Navbar />
-      </div>
+      <Navbar />
       <div dangerouslySetInnerHTML={{ __html: createPage() }} />
     </div>
   );
