@@ -26,18 +26,18 @@ const Content = styled.main`
 `;
 
 const OrdersContainer = styled.div`
-  background-color: rgba(255, 255, 255, 0.9); /* Slightly transparent */
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 2rem;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 1200px; /* Adjust the size */
+  max-width: 1200px;
   width: 100%;
-  min-height: 80vh; /* Ensures it takes almost the whole vertical part of the page */
+  min-height: 80vh;
   position: relative;
 `;
 
 const Title = styled.h1`
-  font-size: 2.5rem; /* Adjust the font size */
+  font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 2rem;
 `;
@@ -143,10 +143,20 @@ const OrdersPage = () => {
   const ordersPerPage = 5;
 
   useEffect(() => {
-    // Fetch orders from the API
-    fetch('/api/orders')
-      .then(response => response.json())
-      .then(data => setOrders(data));
+    const fetchOrders = async () => {
+      try {
+        const response = await fetch("http://localhost:7000/orderhistory", {
+          method: "GET",
+          credentials: 'include', // Ensure cookies are included in the request
+        });
+        const data = await response.json();
+        setOrders(data);
+      } catch (err) {
+        console.error('Error fetching order history:', err);
+      }
+    };
+
+    fetchOrders();
   }, []);
 
   // Calculate pagination

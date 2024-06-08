@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../../components/Navbar';
 
-const createPage = () => {
-    return `
+const createPage = (cartItems, subtotal, shipping, total, updateQuantity, removeItem) => {
+  return `
     <style>
       body, html {
         margin: 0;
@@ -255,22 +255,34 @@ const createPage = () => {
     
     <!-- Main Content Container -->
     <div class="container">
-      <!-- Cart Items Section -->
       <div class="cart-items">
         <h2>Your Cart</h2>
         <hr />
         <p>Shopping cart</p>
-        <p>You have <span id="item-count">0</span> items in your cart</p>
+        <p>You have <span id="item-count">${cartItems.length}</span> items in your cart</p>
         <div id="cart-items-container">
-          <!-- Cart items will be dynamically added here -->
+          ${cartItems.map(item => `
+            <div class="cart-item">
+              <img src="${item.images && item.images[0] ? item.images[0] : 'pallet2.svg'}" alt="${item.productName}" />
+              <div class="cart-item-info">
+                <span>${item.productName}</span>
+                <div class="quantity-controls">
+                  <button onclick="updateQuantity('${item.productId}', 'subtract')">-</button>
+                  <span>${item.quantity}</span>
+                  <button onclick="updateQuantity('${item.productId}', 'add')">+</button>
+                </div>
+                <span>$${item.totalPrice.toFixed(2)}</span>
+              </div>
+              <button class="remove-button" onclick="removeItem('${item.productId}')">&times;</button>
+            </div>
+          `).join('')}
         </div>
       </div>
     
-      <!-- Summary Section -->
       <div class="summary">
         <h3>Card Details</h3>
         <div class="card-details">
-          <form>
+          <form id="checkout-form">
             <label for="name">Name on card</label>
             <input type="text" id="name" placeholder="Name" required />
             
@@ -288,10 +300,10 @@ const createPage = () => {
               </div>
             </div>
     
-            <p>Subtotal: $<span id="subtotal">0</span></p>
-            <p>Shipping: $<span id="shipping">0</span></p>
-            <p>Total: $<span id="total">0</span></p>
-            <button type="submit">$<span id="total-button">0</span> Checkout</button>
+            <p>Subtotal: $<span id="subtotal">${subtotal.toFixed(2)}</span></p>
+            <p>Shipping: $<span id="shipping">${shipping.toFixed(2)}</span></p>
+            <p>Total: $<span id="total">${total.toFixed(2)}</span></p>
+            <button type="submit">$<span id="total-button">${total.toFixed(2)}</span> Checkout</button>
           </form>
         </div>
       </div>
@@ -299,51 +311,110 @@ const createPage = () => {
     
     <script>
       document.addEventListener("DOMContentLoaded", function() {
-        const itemCountElement = document.getElementById('item-count');
-        const subtotalElement = document.getElementById('subtotal');
-        const shippingElement = document.getElementById('shipping');
-        const totalElement = document.getElementById('total');
-        const totalButtonElement = document.getElementById('total-button');
-    
-        // Function to update totals
-        function updateTotals(subtotal, shipping) {
-          const total = subtotal + shipping;
-          subtotalElement.innerText = subtotal.toFixed(2);
-          shippingElement.innerText = shipping.toFixed(2);
-          totalElement.innerText = total.toFixed(2);
-          totalButtonElement.innerText = total.toFixed(2);
+        function updateQuantity(productId, action) {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", \`http://localhost:7000/\${action}Quantity\`, true);
+          xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          xhr.withCredentials = true; // Ensure cookies are included in the request
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              location.reload();
+            }
+          };
+          xhr.send(JSON.stringify({ prodId: productId }));
         }
 
-        // Function to update item count
-        function updateItemCount(count) {
-          itemCountElement.innerText = count;
+        function removeItem(productId) {
+          const xhr = new XMLHttpRequest();
+          xhr.open("DELETE", "http://localhost:7000/removeCartItem", true);
+          xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          xhr.withCredentials = true; // Ensure cookies are included in the request
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              location.reload();
+            }
+          };
+          xhr.send(JSON.stringify({ prodId: productId }));
         }
 
-        // // Example usage (replace this with actual data fetching from your backend)
-        // const exampleData = {
-        //   itemCount: 3,
-        //   subtotal: 52.00,
-        //   shipping: 4.00
-        // };
+        function checkout(event) {
+          event.preventDefault();
+          const orderData = {
+            cartItems: ${JSON.stringify(cartItems)},
+            totalPrice: ${total.toFixed(2)}
+          };
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", "http://localhost:7000/createOrder", true);
+          xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+          xhr.withCredentials = true; // Ensure cookies are included in the request
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+              const clearCartXhr = new XMLHttpRequest();
+              clearCartXhr.open("POST", "http://localhost:7000/clearCart", true);
+              clearCartXhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+              clearCartXhr.withCredentials = true; // Ensure cookies are included in the request
+              clearCartXhr.onreadystatechange = function () {
+                if (clearCartXhr.readyState === 4 && clearCartXhr.status === 200) {
+                  alert("Transaction successful! Cart cleared.");
+                  location.reload();
+                }
+              };
+              clearCartXhr.send();
+            }
+          };
+          xhr.send(JSON.stringify(orderData));
+        }
 
-        // // Update the UI with example data
-        // updateItemCount(exampleData.itemCount);
-        // updateTotals(exampleData.subtotal, exampleData.shipping);
+        window.updateQuantity = updateQuantity;
+        window.removeItem = removeItem;
+        document.getElementById("checkout-form").addEventListener("submit", checkout);
       });
     </script>
   `;
 };
 
-// Main React component for the page
 const Page = () => {
-    return (
-        <div>
-            <div id="navbar">
-                <Navbar />
-            </div>
-            <div dangerouslySetInnerHTML={{ __html: createPage() }} />
-        </div>
-    );
+  const [cartItems, setCartItems] = useState([]);
+  const [subtotal, setSubtotal] = useState(0);
+  const [shipping, setShipping] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  useEffect(() => {
+    const fetchCartItems = async () => {
+      try {
+        const response = await fetch("http://localhost:7000/cartItems", {
+          method: "GET",
+          credentials: 'include', // Ensure cookies are included in the request
+        });
+        const data = await response.json();
+
+        let subtotal = data.reduce((acc, item) => acc + item.totalPrice, 0);
+        let shipping = 4.00; // Flat rate shipping for example
+        let total = subtotal + shipping;
+
+        if (subtotal == 0) {
+          total = 0;
+        }
+        setCartItems(data);
+        setSubtotal(subtotal);
+        setShipping(shipping);
+        setTotal(total);
+      } catch (err) {
+        console.error('Error fetching cart items:', err);
+      }
+    };
+
+    fetchCartItems();
+  }, []);
+
+  return (
+    <div>
+      <div id="navbar">
+        <Navbar />
+      </div>
+      <div dangerouslySetInnerHTML={{ __html: createPage(cartItems, subtotal, shipping, total) }} />
+    </div>
+  );
 };
 
 export default Page;

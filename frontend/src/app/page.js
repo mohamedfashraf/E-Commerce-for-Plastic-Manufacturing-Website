@@ -4,7 +4,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Navbar from '../components/Navbar';
-
+import Link from 'next/link';
 const MainContainer = styled.div`
   display: flex;
   flex-direction: column;

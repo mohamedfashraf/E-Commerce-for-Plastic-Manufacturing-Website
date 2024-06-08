@@ -199,7 +199,7 @@ const AllProductsPage = () => {
           <GridContainer>
             {currentProducts.map((product) => (
               <ProductCard key={product._id} onClick={() => handleProductClick(product._id)}>
-                <img src={`/${product.image}`} alt={product.name} />
+                <img src={`/${product.images}`} alt={product.name} />
                 <h3>{product.name}</h3>
                 <p>{product.description}</p>
                 <div className="buttons">

@@ -17,6 +17,7 @@ export class AppService {
     @InjectModel('PromoCode') private readonly promoCodeModel: Model<any>,
     @InjectModel('Order') private readonly ordersModel: Model<any>,
   ) {}
+  private orders = new Map<string, any[]>();
 
   getHello(): string {
     //working
@@ -52,6 +53,17 @@ export class AppService {
       return 'no cart for this userId';
     }
     return cart.cartItems;
+  }
+
+  async createOrder(userId: string, makeOrderDto: makeOrderDto): Promise<any> {
+    const orders = this.orders.get(userId) || [];
+    orders.push({
+      orderId: Date.now(),
+      items: makeOrderDto.cartItems,
+      totalPrice: makeOrderDto.totalPrice,
+    });
+    this.orders.set(userId, orders);
+    return { message: 'Order created successfully' };
   }
 
   async addOneQuantity(userId: string, prodId: string): Promise<any> {

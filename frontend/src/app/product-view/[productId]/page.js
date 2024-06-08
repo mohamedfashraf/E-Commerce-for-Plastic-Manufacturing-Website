@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Navbar from '../../../components/Navbar';
 import styled from 'styled-components';
+import { FaHeart } from 'react-icons/fa'; // Importing the icon
 
 const MainContainer = styled.div`
   display: flex;
@@ -126,72 +127,132 @@ const ReviewsButton = styled(Button)`
   }
 `;
 
+const AddToFavoritesIcon = styled(FaHeart)`
+  color: #ff6b6b;
+  cursor: pointer;
+  font-size: 24px;
+  &:hover {
+    color: #ff3b3b;
+  }
+`;
+
 const ProductDetailsPage = () => {
-    const [product, setProduct] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const params = useParams();
-    const productId = params.productId;
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const params = useParams();
+  const productId = params.productId;
 
-    useEffect(() => {
-        if (!productId) return;
+  useEffect(() => {
+    if (!productId) return;
 
-        const fetchProduct = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch(`http://localhost:8080/product/productdetails/${productId}`);
-                const data = await response.json();
-                setProduct(data);
-                setLoading(false);
-            } catch (err) {
-                setError(err);
-                setLoading(false);
-            }
-        };
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:8080/product/productdetails/${productId}`);
+        const data = await response.json();
+        setProduct(data);
+        setLoading(false);
+      } catch (err) {
+        setError(err);
+        setLoading(false);
+      }
+    };
 
-        fetchProduct();
-    }, [productId]);
+    fetchProduct();
+  }, [productId]);
 
-    if (loading) {
-        return <p>Loading...</p>;
+  const addToCart = async () => {
+    try {
+      const response = await fetch('http://localhost:7000/addToCart', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensure cookies are included in the request
+        body: JSON.stringify({
+          productId: product._id,
+          productName: product.name,
+          price: product.price,
+          totalPrice: product.price, // Assuming totalPrice is the same as price for a single item
+          quantity: 1,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to add item to cart');
+      }
+      alert('Item added to cart successfully');
+    } catch (err) {
+      console.error('Error adding item to cart:', err);
+      alert('Error adding item to cart');
     }
+  };
 
-    if (error) {
-        return <p>Error fetching product: {error.message}</p>;
+  const addToWishlist = async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/product/${productId}/wishlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensure cookies are included in the request
+        body: JSON.stringify({
+          productId: product._id,
+          productName: product.name,
+          price: product.price,
+        }),
+      });
+      if (!response.ok) {
+        throw new Error('Failed to add item to wishlist');
+      }
+      alert('Item added to wishlist successfully');
+    } catch (err) {
+      console.error('Error adding item to wishlist:', err);
+      alert('Error adding item to wishlist');
     }
+  };
 
-    return (
-        <MainContainer>
-            <NavbarContainer>
-                <Navbar />
-            </NavbarContainer>
-            <ImageContainer />
-            <Content>
-                <ProductContainer>
-                    <ProductImage src={`/${product.images}`} alt={product.name} />
-                    <ProductName>{product.name}</ProductName>
-                    <ProductDetails>{product.description}</ProductDetails>
-                    <ProductDetails><strong>Price:</strong> ${product.price}</ProductDetails>
-                    <ProductDetails><strong>Color:</strong> {product.color}</ProductDetails>
-                    <ProductDetails><strong>Size:</strong> {product.size}</ProductDetails>
-                    <ProductDetails><strong>Material:</strong> {product.material}</ProductDetails>
-                    <ProductDetails><strong>Availability:</strong> {product.availability ? 'In Stock' : 'Out of Stock'}</ProductDetails>
-                    {product.rentalOptions && product.rentalOptions.available && (
-                        <>
-                            <ProductDetails><strong>Daily Rate:</strong> ${product.rentalOptions.dailyRate}</ProductDetails>
-                            <ProductDetails><strong>Deposit:</strong> ${product.rentalOptions.deposit}</ProductDetails>
-                        </>
-                    )}
-                    <ButtonContainer>
-                        <AddToCartButton>Add to Cart</AddToCartButton>
-                        <WishlistButton>Wishlist</WishlistButton>
-                        <RentButton>Rent</RentButton>
-                        <ReviewsButton>Reviews</ReviewsButton>
-                    </ButtonContainer>
-                </ProductContainer>
-            </Content>
-        </MainContainer>
-    );
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
+  if (error) {
+    return <p>Error fetching product: {error.message}</p>;
+  }
+
+  return (
+    <MainContainer>
+      <NavbarContainer>
+        <Navbar />
+      </NavbarContainer>
+      <ImageContainer />
+      <Content>
+        <ProductContainer>
+          <ProductImage src={`/${product.images}`} alt={product.name} />
+          <ProductName>{product.name}</ProductName>
+          <ProductDetails>{product.description}</ProductDetails>
+          <ProductDetails><strong>Price:</strong> ${product.price}</ProductDetails>
+          <ProductDetails><strong>Color:</strong> {product.color}</ProductDetails>
+          <ProductDetails><strong>Size:</strong> {product.size}</ProductDetails>
+          <ProductDetails><strong>Material:</strong> {product.material}</ProductDetails>
+          <ProductDetails><strong>Availability:</strong> {product.availability ? 'In Stock' : 'Out of Stock'}</ProductDetails>
+          {product.rentalOptions && product.rentalOptions.available && (
+            <>
+              <ProductDetails><strong>Daily Rate:</strong> ${product.rentalOptions.dailyRate}</ProductDetails>
+              <ProductDetails><strong>Deposit:</strong> ${product.rentalOptions.deposit}</ProductDetails>
+            </>
+          )}
+          <ButtonContainer>
+            <AddToCartButton onClick={addToCart}>Add to Cart</AddToCartButton>
+            <WishlistButton onClick={addToWishlist}>Add to Wishlist</WishlistButton>
+            <RentButton>Rent</RentButton>
+            <ReviewsButton>Reviews</ReviewsButton>
+            <AddToFavoritesIcon onClick={addToWishlist} title="Add to Favorites" />
+          </ButtonContainer>
+        </ProductContainer>
+      </Content>
+    </MainContainer>
+  );
 };
 
 export default ProductDetailsPage;
