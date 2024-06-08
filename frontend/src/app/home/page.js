@@ -1,4 +1,3 @@
-// src/app/page.js
 "use client";
 
 import Link from 'next/link';
@@ -113,10 +112,15 @@ const HomePage = () => {
           </Description>
           <ButtonGroup>
             <ButtonRow>
-              <Link href="/products" passHref>
+              <Link href="/all-products" passHref>
                 <Button bgColor="green" color="white">Browse Products</Button>
               </Link>
               <Button>Learn More</Button>
+            </ButtonRow>
+            <ButtonRow>
+              <Link href="/products" passHref>
+                <Button bgColor="green" color="white">Customize Your Order</Button>
+              </Link>
             </ButtonRow>
           </ButtonGroup>
         </TextContainer>
